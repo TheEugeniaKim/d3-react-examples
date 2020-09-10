@@ -1,20 +1,35 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './App.css';
 import LineChart from './Components/LineChart'
 import BarChart from './Components/BarChart'
-import WorldMapContainer from './Components/WorldMapConner'
+import WorldMapContainer from './Components/WorldMapContainer'
 
 function App() {
+  const [data, setData] = useState([25, 30, 45, 60, 10, 65, 75]);
+
   return (
-    <div className="container">
+
+    <React.Fragment>
       
       {/* <LineChart /> */}
 
-      <BarChart />
+      <BarChart data={data} />
+
+      <button onClick={() => setData(data.map((value) => value + 5))}>
+        Update Data
+      </button>
+      <button onClick={() => setData(data.filter((value) => value < 35))}>
+        Filter Data
+      </button>
+      <button
+        onClick={() => setData([...data, Math.round(Math.random() * 100)])}
+      >
+        Add Data
+      </button>
 
       {/* <WorldMapContainer /> */}
 
-    </div>
+    </React.Fragment>
   )
 }
 
