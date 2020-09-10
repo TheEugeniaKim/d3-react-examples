@@ -13,7 +13,7 @@ function App() {
       
       {/* <LineChart /> */}
 
-      <BarChart data={data} />
+      {/* <BarChart data={data} />
 
       <button onClick={() => setData(data.map((value) => value + 5))}>
         Update Data
@@ -25,9 +25,9 @@ function App() {
         onClick={() => setData([...data, Math.round(Math.random() * 100)])}
       >
         Add Data
-      </button>
+      </button> */}
 
-      {/* <WorldMapContainer /> */}
+      <WorldMapContainer />
 
     </React.Fragment>
   )
