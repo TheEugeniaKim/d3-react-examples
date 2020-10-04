@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState } from "react";
 import "../App.css";
-import { select, scaleBand, scaleLinear, axisBottom, axisRight } from "d3";
+import { select, scaleBand, scaleLinear, axisBottom, axisRight, selection } from "d3";
 import ResizeObserver from "resize-observer-polyfill";
 
 const useResizeObserver = (ref) => {
@@ -29,8 +29,7 @@ function BarChart({ data }) {
   // will be called initially and on every data change
   useEffect(() => {
     const svg = select(svgRef.current);
-    console.log(dimensions)
-
+    // console.log("hello",svg, svg.typeOf())
     if (!dimensions) return;
 
     const xScale = scaleBand()
@@ -55,28 +54,48 @@ function BarChart({ data }) {
     const yAxis = axisRight(yScale);
     svg.select(".y-axis").style("transform", `translateX(${dimensions.width}px)`).call(yAxis);
 
+    // function mouseEntered(event, value, [,, i]) {
+    //   console.log(i)
+    //   console.log(this)
+    //   console.log(event, value, i)
+    //   const e = svg.nodes()
+    //   // const index = e.indexOf(this)
+    //   console.log(e)
+    //   // console.log(index)
+    //   return (
+    //     svg
+    //       .selectAll(".d3tooltip")
+    //       .data([value])
+    //       .join(enter => enter.append("text").attr("y", yScale(value) - 4))
+    //       .join("text")
+    //       .attr("class", "d3tooltip") 
+    //       .text(value)
+    //       .attr("x", xScale(i))
+    //       // .attr("x", (xValue, index) => {
+    //       //   console.log(xValue, index)
+    //       //   return xScale(i) + xScale.bandwidth() / 2
+    //       // })
+    //       .attr("y", yScale(value) - 8)
+    //       .attr("text-anchor", "middle")
+    //       .transition()
+    //       .attr("opacity", 1)
+    //   )
+    // }
+
     svg
-      .selectAll(".bar")
+      .selectAll(".bar") 
       .data(data)
       .join("rect")
+        // .datum(([x, y], i) => [x, y, i])
       .attr("class", "bar")
       .style("transform", "scale(1, -1)")
       .attr("x", (value, dataIndex) => xScale(dataIndex))
       .attr("y", -dimensions.height)
       .attr("width", xScale.bandwidth())
-      .on("mouseenter", (event, value) => {
-        svg
-          .selectAll(".d3tooltip")
-          .data([value])
-          .join(enter => enter.append("text").attr("y", yScale(value) - 4))
-          .join("text")
-          .attr("class", "d3tooltip") 
-          .text(value)
-          .attr("x", xScale(data.indexOf(value)) + xScale.bandwidth() / 2)
-          .attr("y", yScale(value) - 8)
-          .attr("text-anchor", "middle")
-          .transition()
-          .attr("opacity", 1)
+      .on("mouseenter", function(event, d) {
+        const e = svg.nodes()
+        const i = e.indexOf(this)
+        console.log(e, i, d)
       })
       .on("mouseleave", () => 
         svg.select(".d3tooltip").remove()
@@ -84,12 +103,11 @@ function BarChart({ data }) {
       .transition()
       .attr("fill", colorScale)
       .attr("height", (value) => dimensions.height - yScale(value))
-    
-    }, [data, dimensions]);
+  },[data, dimensions]);
 
   return (
   <div className="wrapper" ref={wrapperRef} style={{marginBottom: "2rem"}}>
-    <svg ref={svgRef}>
+    <svg ref={svgRef} >
       <g className="x-axis" />
       <g className="y-axis" />
     </svg>
