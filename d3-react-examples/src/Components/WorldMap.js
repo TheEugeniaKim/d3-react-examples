@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react'
 import '../App.css'
-import { select, geoPath, geoMercator, min, max, scaleLinear } from 'd3'
+import { select, geoPath, geoMercator, min, max, scaleLinear, zoom } from 'd3'
 import useResizeObserver from './useResizeObserver'
 
 function WorldMap({data, property}){
@@ -8,10 +8,10 @@ function WorldMap({data, property}){
   const wrapperRef = useRef();
   const dimensions = useResizeObserver(wrapperRef);
   const [selectedCountry, setSelectedCountry] = useState(null);
-  
+
   useEffect(() => {
     const svg = select(svgRef.current);
-
+    const g = svg.append("g")
     const minProp = min(data.features, feature => feature.properties[property]);
     const maxProp = max(data.features, feature => feature.properties[property]);
     console.warn(minProp, maxProp)
@@ -23,36 +23,31 @@ function WorldMap({data, property}){
     //takes geojson data and transforms that into the d attribute of path element
     const pathGenerator = geoPath().projection(projection);
 
-    svg
+    g
       .selectAll(".country")
       .data(data.features)
       .join("path")
-      .on("click", feature => {
-        setSelectedCountry(selectedCountry === feature ? null : feature);
-      })
+      // .on("click", event => {
+        // console.log(event.path)
+        // setSelectedCountry(selectedCountry === feature ? null : feature);
+      // })
       .attr("class", "country")
       .attr("fill", feature => colorScale(feature.properties[property]))
       .attr("d", feature => pathGenerator(feature))
+      .append("title")
+        .text(feature => feature.properties.name)
+      .append("title")
+        .text(feature => feature.properties.women)
 
-    svg
-      .selectAll(".label")
-      .data([selectedCountry])
-      .join("text")
-      .attr("class", "label")
-      .text(
-        feature =>
-          feature &&
-          feature.properties.name +
-            ": " +
-            feature.properties[property].toLocaleString()
-      )
-      .attr("x", 10)
-      .attr("y", 25);
-  }, [data, dimensions, property])
+    svg.call(zoom().on("zoom", (event) => {
+      g.attr('transform', event.transform)
+    }))
+
+  }, [data, dimensions, property, selectedCountry])
 
   return(
     <div ref={wrapperRef} style={{marginBottom: "2rem"}}>
-      <svg ref={svgRef}></svg>
+      <svg className="world-map"ref={svgRef}></svg>
     </div>
   )
 }

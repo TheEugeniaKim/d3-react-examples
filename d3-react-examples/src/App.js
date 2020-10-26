@@ -4,10 +4,10 @@ import LineChart from './Components/LineChart'
 import BarChart from './Components/BarChart'
 import WorldMapContainer from './Components/WorldMapContainer'
 import RadialBarChart from './Components/RadialBarChart';
-
+import ScatterPlot from './Components/ScatterPlot'
 function App() {
   const [data, setData] = useState([25, 75, 30, 45, 60, 10, 65, 75]);
-
+  const [scatterData, setScatterData] = useState([{id: 1, value:24, name: "datapoint 1"},{id:2, value:15, name: "datapoint 2"},{id:3, value:22, name: "datapoint 3"},{id: 4, value:20, name: "datapoint 4"}])
   return (
 
     <React.Fragment>
@@ -28,15 +28,17 @@ function App() {
         Add Data
       </button> 
 
-      <WorldMapContainer />
+      <ScatterPlot data={scatterData} />
 
-      <RadialBarChart 
+      {/* <WorldMapContainer /> */}
+
+      {/* <RadialBarChart 
         width={200} 
         height={200} 
         outerRadius={100} 
         innerRadius={50}
         data={[{label:"men", value: 69},{label: "non-binary", value:1},{label: "women", value:30}]}
-      />
+      /> */}
     </React.Fragment>
   )
 }

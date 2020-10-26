@@ -18,3 +18,13 @@ button {
   border: 1px solid black; 
   margin: 0 auto 5px;
 }
+
+.world-map {
+  width: 100vh;
+  height: 600px;
+  border: 1px solid black; 
+}
+
+.country:hover {
+  fill: red;
+}
